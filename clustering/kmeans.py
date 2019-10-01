@@ -2,7 +2,13 @@ from collections import defaultdict
 from math import inf
 import random
 import csv
+import math
 
+"""
+Name: Xiaoyan Su
+BUID: U70449420
+Assignment: CS506 Extra Credit
+"""
 
 def point_avg(points):
     """
@@ -11,7 +17,20 @@ def point_avg(points):
     
     Returns a new point which is the center of all the points.
     """
-    raise NotImplementedError()
+
+    ret = [0] * len(points[0])
+
+
+    for each in points:
+        for i in range(len(each)):
+           # print(len(ret))
+           # print(len(each))
+            ret[i] += int(each[i])
+
+    return [sum_/len(points) for sum_ in ret]
+
+
+    #raise NotImplementedError()
 
 
 def update_centers(data_set, assignments):
@@ -21,7 +40,26 @@ def update_centers(data_set, assignments):
     Compute the center for each of the assigned groups.
     Return `k` centers in a list
     """
-    raise NotImplementedError()
+    #raise NotImplementedError()
+
+    dic = {}
+    for i in range(len(data_set)):
+        if assignments[i] not in dic:
+            dic[assignments[i]] = [data_set[i]]
+
+        else:
+            dic[assignments[i]].append(data_set[i])
+    ret = []
+    dic_lst = list(dic.keys())
+
+    for each in dic_lst:
+        ret.append(point_avg(dic[each]))
+    
+
+    return ret
+
+
+
 
 
 def assign_points(data_points, centers):
@@ -44,7 +82,14 @@ def distance(a, b):
     """
     Returns the Euclidean distance between a and b
     """
-    raise NotImplementedError()
+
+    #print(zip(a,b))
+    #print([(x,y) for x,y in zip(a,b)])
+
+    ret = sum([(int(x) - int(y)) ** 2 for x, y in zip(a, b)])
+
+
+    return math.sqrt(ret)
 
 
 def generate_k(data_set, k):
@@ -52,15 +97,30 @@ def generate_k(data_set, k):
     Given `data_set`, which is an array of arrays,
     return a random set of k points from the data_set
     """
-    raise NotImplementedError()
+    return random.sample(data_set,k)
 
+print(generate_k([[2,3,4,],[4,5,6]], 1))
 
 def get_list_from_dataset_file(dataset_file):
-    raise NotImplementedError()
+    
+    ret = []
+
+    with open(dataset_file,'r') as f:
+        data = csv.reader(f)
+        for point in data:
+            ret.append(point)
+    return ret
 
 
 def cost_function(clustering):
-    raise NotImplementedError()
+    
+    cost = 0
+    for each in clustering.keys():
+        center = point_avg(clustering[each])
+        for each_point in clustering[each]:
+            cost += distance(each_point, center)
+
+    return cost
 
 
 def k_means(dataset_file, k):
